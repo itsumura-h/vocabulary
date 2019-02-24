@@ -23,9 +23,6 @@
         <md-table-cell>{{word.meaning}}</md-table-cell>
       </md-table-row>
     </md-table>
-    <!--
-    <p>{{response}}</p>
-    -->
   </div>
 </template>
 
@@ -43,8 +40,8 @@ export default {
   methods: {
     search: function () {
       // const url = 'https://' + this.host + '/products/vocabulary/api/searchByWords'
-      // const url = 'https://dumblepy.site/products/vocabulary/api/searchByWords'
-      const url = 'http://localhost:8000/products/vocabulary/api/searchByWords'
+      const url = 'https://dumblepy.site/products/vocabulary/api/searchByWords'
+      // const url = 'http://localhost:8000/products/vocabulary/api/searchByWords'
       const body = JSON.stringify({ words: this.words.split(/\n/) }) // 改行コードで分割して配列にする
       console.log(body)
       const headers = {
@@ -62,30 +59,27 @@ export default {
         .catch(err => {
           console.error(err)
         })
-
-      console.log(this.response)
     },
     download: function () {
-      const url = 'http://' + this.host + '/products/vocabulary/api/downloadCSV'
+      // const url = 'http://' + this.host + '/products/vocabulary/api/downloadCSV'
+      // const url = 'https://dumblepy.site/products/vocabulary/api/downloadCSV'
+      const url = 'http://localhost:8000/products/vocabulary/api/downloadCSV'
       const method = 'POST'
       const body = JSON.stringify({ request: this.response })
       console.log(body)
       const headers = {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json'
+        'Accept': 'application/json'
       }
 
-      fetch(url, { method, headers, body })
-        .then(response => {
-          // if (response.text.length > 0) {
-          return response.blob()
-          // }
-        })
+      axios.post(url, body, headers)
         .then(response => {
           let anchor = document.createElement('a')
           anchor.download = 'vocabulary.csv'
           anchor.href = window.URL.createObjectURL(response)
           anchor.click()
+        })
+        .catch(err => {
+          console.error(err)
         })
     },
     downloadMac: function () {
