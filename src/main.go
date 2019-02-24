@@ -23,8 +23,9 @@ func main() {
 	r.LoadHTMLGlob("vue/dist/*.html")
 
 	r.POST("/products/vocabulary/api/searchByWords", controllers.SearchByWords)
+	r.POST("/products/vocabulary/api/downloadCSV", controllers.downloadCSV)
 	r.GET("/products/vocabulary", presenetView)
 
-	//r.Run(":8000")
-	r.RunUnix("/var/run/vocabulary.sock")
+	r.Run(":8000")
+	//r.RunUnix("/var/run/vocabulary.sock")
 }
