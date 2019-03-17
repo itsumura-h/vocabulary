@@ -1,6 +1,9 @@
 .vscode/*
 bin/*
 pkg/*
-src/*
+src/github.com/*
+src/golang.org/*
+src/gopkg.in/*
+src/sourcegraph.com/*
 main
 vocabulary

@@ -2,8 +2,8 @@ package main
 
 import (
 	"./controllers"
-	"github.com/gin-gonic/gin"
 	"github.com/gin-contrib/cors"
+	"github.com/gin-gonic/gin"
 )
 
 func root(c *gin.Context) {
@@ -17,12 +17,13 @@ func presenetView(c *gin.Context) {
 func main() {
 	r := gin.Default()
 	r.Use(cors.New(cors.Config{
-		AllowOrigins:     []string{"*"},
+		AllowOrigins: []string{"https://dumblepy.site", "http://localhost:8080"},
+		//AllowOrigins: []string{"*"},
 	}))
 
 	r.LoadHTMLGlob("vue/dist/*.html")
 
-	r.POST("/products/vocabulary/api/searchByWords", controllers.SearchByWords)
+	r.POST("/products/vocabulary/api/searchByWords", Controllers.SearchByWords)
 	r.GET("/products/vocabulary", presenetView)
 
 	//r.Run(":8000")
