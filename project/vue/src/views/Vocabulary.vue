@@ -7,7 +7,7 @@
       <div class="md-layout-item md-layout md-gutter">
         <md-button @click="search" v-if="words.length" class="md-dense md-raised md-primary">変換開始！</md-button>
         <md-button @click="download" v-show="dowwnloadDisplay" class="md-dense md-raised md-primary">ダウンロード</md-button>
-        <md-button @click="downloadMac" v-show="dowwnloadDisplay" class="md-dense md-raised md-primary">ダウンロード for Mac</md-button>
+        <!--<md-button @click="downloadMac" v-show="dowwnloadDisplay" class="md-dense md-raised md-primary">ダウンロード for Mac</md-button>-->
         <md-button @click="load" class="md-dense md-raised md-primary">再ロード</md-button>
         <md-button @click="clear" v-show="dowwnloadDisplay" class="md-dense md-raised md-primary">クリア</md-button>
       </div>
@@ -17,10 +17,10 @@
         <md-table-head>発音記号</md-table-head>
         <md-table-head>意味</md-table-head>
       </md-table-row>
-      <md-table-row v-for="word in response" v-bind:key="word.key" class="results">
-        <md-table-cell>{{word.word}}</md-table-cell>
-        <md-table-cell>{{word.pron}}</md-table-cell>
-        <md-table-cell>{{word.meaning}}</md-table-cell>
+      <md-table-row v-for="word in response" v-bind:key="word.Key" class="results">
+        <md-table-cell>{{word.Word}}</md-table-cell>
+        <md-table-cell>{{word.Pron}}</md-table-cell>
+        <md-table-cell>{{word.Meaning}}</md-table-cell>
       </md-table-row>
     </md-table>
   </div>
@@ -43,9 +43,9 @@ export default {
       const url = 'https://dumblepy.site/products/vocabulary/api/searchByWords'
       // const url = 'http://localhost:8000/products/vocabulary/api/searchByWords'
       const body = JSON.stringify({ words: this.words.split(/\n/) }) // 改行コードで分割して配列にする
-      console.log(body)
       const headers = {
-        'Accept': 'application/json'
+        'Accept': 'application/json',
+        'mode': 'no-cors'
       }
 
       axios.post(url, body, headers)
@@ -61,26 +61,21 @@ export default {
         })
     },
     download: function () {
-      // const url = 'http://' + this.host + '/products/vocabulary/api/downloadCSV'
-      // const url = 'https://dumblepy.site/products/vocabulary/api/downloadCSV'
-      const url = 'http://localhost:8000/products/vocabulary/api/downloadCSV'
-      const method = 'POST'
-      const body = JSON.stringify({ request: this.response })
-      console.log(body)
-      const headers = {
-        'Accept': 'application/json'
+      const response = JSON.parse(window.localStorage.getItem('response'))
+      let csvBody = [['id', '英単語', '発音', '意味']]
+      for (let row of response) {
+        let rowBody = [row.Key + 1, row.Word, row.Pron, row.Meaning]
+        csvBody[row.Key + 1] = rowBody
       }
 
-      axios.post(url, body, headers)
-        .then(response => {
-          let anchor = document.createElement('a')
-          anchor.download = 'vocabulary.csv'
-          anchor.href = window.URL.createObjectURL(response)
-          anchor.click()
-        })
-        .catch(err => {
-          console.error(err)
-        })
+      let data = csvBody.map((row) => row.join(',')).join('\r\n')
+      let bom = new Uint8Array([0xEF, 0xBB, 0xBF])
+      let blob = new Blob([bom, data], { type: 'text/csv' })
+
+      let anchor = document.createElement('a')
+      anchor.download = 'vocabulary.csv'
+      anchor.href = window.URL.createObjectURL(blob)
+      anchor.click()
     },
     downloadMac: function () {
       const url = 'http://' + this.host + '/rubyapi/downloadCSVMac'
@@ -122,12 +117,6 @@ export default {
     if (window.localStorage.getItem('response')) {
       this.load()
     }
-    let host = location.host
-    // if (host === 'localhost:8080') {
-    //   host = 'localhost:3000'
-    // }
-    this.host = host
-    console.log(host)
   }
 
 }

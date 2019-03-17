@@ -1,15 +1,14 @@
-package service
+package Service
 
 import (
+	"../type"
 	"fmt"
 	"github.com/PuerkitoBio/goquery"
 	"regexp"
 	"strings"
-
-	"../type"
 )
 
-func Scraping(key int, word string) type.WordRow {
+func Scraping(key int, word string) Type.WordRow {
 	// バイト型を定義してから文字列を結合してurlを作る
 	// Goでは文字列連結はコストの高い操作
 	// https://qiita.com/ruiu/items/2bb83b29baeae2433a79
@@ -54,7 +53,7 @@ func Scraping(key int, word string) type.WordRow {
 	})
 	meaning := string(meaningByte)
 
-	return WordRow{Key: key, Word: word, Pron: pron, Meaning: meaning}
+	return Type.WordRow{Key: key, Word: word, Pron: pron, Meaning: meaning}
 }
 
 //正規表現で置換
